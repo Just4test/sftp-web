@@ -1,0 +1,31 @@
+services:
+  sftp-web:
+    build: .
+    # image: sftp-web:latest  # uncomment if using pre-built image
+    container_name: sftp-web
+    privileged: true          # required for FUSE (rclone mount)
+    ports:
+      - "8080:80"
+      # - "443:443"           # uncomment for HTTPS
+    environment:
+      # Required
+      - SFTP_HOST=your-sftp-server.com
+      - SFTP_PORT=22
+      - SFTP_USER=your-username
+      # Password auth (optional if using SSH key)
+      - SFTP_PASS=your-password
+      # Remote web folder to serve (default: /)
+      - SFTP_REMOTE_WEB_FOLDER=/www
+      # Remote Caddyfile path on SFTP (optional)
+      # - SFTP_REMOTE_CADDYFILE=/config/Caddyfile
+    volumes:
+      # Persist auto-generated SSH keys across restarts
+      - ssh-keys:/keys
+      # Mount your SSH private key (optional, takes priority over password)
+      # - ./my-ssh-key:/user-key/id_rsa:ro
+      # Override the built-in Caddyfile (optional)
+      # - ./my-caddyfile:/data/caddyfile:ro
+    restart: unless-stopped
+
+volumes:
+  ssh-keys:

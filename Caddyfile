@@ -1,0 +1,15 @@
+# Default Caddyfile - SPA (Single Page Application) support
+# Override by mounting your own Caddyfile to /data/caddyfile/
+# or by setting SFTP_REMOTE_CADDYFILE environment variable
+
+:80 {
+	root * /srv/web
+
+	# Enable compression
+	encode gzip zstd
+
+	# SPA routing: serve the file if it exists, otherwise fall back to index.html
+	try_files {path} /index.html
+
+	file_server
+}
